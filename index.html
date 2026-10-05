@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIIFA Prototipos - Beyond Health / Colmena</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#f0f2f5;color:#212529;min-height:100vh}
+.hdr{background:#1a2e4a;padding:20px 40px;display:flex;align-items:center;gap:14px}
+.li{width:40px;height:40px;background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.hdr-text h1{color:#fff;font-size:20px;font-weight:800}
+.hdr-text p{color:rgba(255,255,255,.6);font-size:12px;margin-top:2px}
+.main{max-width:900px;margin:40px auto;padding:0 20px}
+.intro{background:#fff;border-radius:12px;padding:24px 28px;margin-bottom:28px;border:1px solid #dee2e6}
+.intro h2{font-size:16px;font-weight:800;color:#1a2e4a;margin-bottom:8px}
+.intro p{font-size:13px;color:#6c757d;line-height:1.6}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:#fff;border-radius:12px;border:1px solid #dee2e6;overflow:hidden;transition:all .2s;text-decoration:none;color:inherit;display:block}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.12);transform:translateY(-2px)}
+.card-top{padding:20px 20px 0}
+.card-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:12px}
+.card-icon.blue{background:#e3f2fd}
+.card-icon.red{background:#ffebee}
+.card-icon.green{background:#e8f5e9}
+.card h3{font-size:14px;font-weight:800;color:#1a2e4a;margin-bottom:6px}
+.card p{font-size:12px;color:#6c757d;line-height:1.5;margin-bottom:14px}
+.card-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tag{background:#f0f2f5;border-radius:20px;padding:2px 10px;font-size:10.5px;font-weight:600;color:#6c757d}
+.card-btn{background:#1a2e4a;color:#fff;text-align:center;padding:10px;font-size:12px;font-weight:700;letter-spacing:.03em}
+.card:hover .card-btn{background:#1565c0}
+.footer{text-align:center;padding:32px 20px;color:#6c757d;font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="li">&#10084;</div>
+  <div class="hdr-text">
+    <h1>Beyond Health &mdash; SIIFA Prototipos</h1>
+    <p>Colmena Salud &bull; Proyecto CUEMED &bull; Octubre 2026</p>
+  </div>
+</div>
+<div class="main">
+  <div class="intro">
+    <h2>&#128196; Prototipos de interfaz SIIFA &mdash; Brechas 15 y 16</h2>
+    <p>Coleccion de prototipos HTML interactivos para las funcionalidades de notificacion de glosas, validaciones de pre-radicado y reporte de lotes. Haz clic en cualquier prototipo para verlo en accion.</p>
+  </div>
+  <div class="cards">
+    <a class="card" href="reporte-lote/index.html">
+      <div class="card-top">
+        <div class="card-icon blue">&#128196;</div>
+        <h3>Reporte de Validaciones por Lote</h3>
+        <p>Dashboard con KPIs, tabla de facturas filtrable, resumen por tipo de error y modal de detalle por factura. Simula el procesamiento de 150 facturas de un lote Invoway.</p>
+        <div class="card-tags">
+          <span class="tag">Brecha 13</span>
+          <span class="tag">Pre-radicado</span>
+          <span class="tag">RIPS</span>
+          <span class="tag">Lote</span>
+        </div>
+      </div>
+      <div class="card-btn">Ver prototipo &rarr;</div>
+    </a>
+    <a class="card" href="validaciones/index.html">
+      <div class="card-top">
+        <div class="card-icon red">&#128683;</div>
+        <h3>Validaciones de Pre-radicado</h3>
+        <p>Dos opciones de diseno para mostrar errores de validacion de negocio en el formulario de radicacion: pestana nueva con badge rojo vs panel colapsable dentro de Radicacion.</p>
+        <div class="card-tags">
+          <span class="tag">Brecha 13</span>
+          <span class="tag">Validaciones</span>
+          <span class="tag">UX</span>
+          <span class="tag">Opcion A/B</span>
+        </div>
+      </div>
+      <div class="card-btn">Ver prototipo &rarr;</div>
+    </a>
+    <a class="card" href="boton-fg/index.html">
+      <div class="card-top">
+        <div class="card-icon green">&#128176;</div>
+        <h3>Boton Finalizar Gestion de Glosas</h3>
+        <p>Prototipo del modulo de gestion de glosas con el boton FG integrado en la pestana Factura. Incluye estados habilitado/deshabilitado, modal de confirmacion y toast de exito.</p>
+        <div class="card-tags">
+          <span class="tag">Brecha 16</span>
+          <span class="tag">Glosas</span>
+          <span class="tag">Contabilidad</span>
+          <span class="tag">FG</span>
+        </div>
+      </div>
+      <div class="card-btn">Ver prototipo &rarr;</div>
+    </a>
+  </div>
+</div>
+<div class="footer">
+  Beyond Health &bull; Colmena Salud &bull; SIIFA Fase III y IV &bull; 2026
+</div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Beyond Health - Validaciones Pre-radicado SIIFA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#1a2e4a;--green:#2d6a2d;--red:#c62828;--rl:#ffebee;--rb:#ef9a9a;--amb:#f59e0b;--al:#fffbeb;--gbg:#f0f2f5;--gc:#f8f9fa;--gb:#dee2e6;--gt:#6c757d;--ink:#212529;--wh:#fff;--bl:#e3f2fd}
+body{font-family:"Segoe UI",Arial,sans-serif;font-size:12.5px;background:var(--gbg);color:var(--ink)}
+.hdr{background:var(--navy);height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.logo{display:flex;align-items:center;gap:10px}
+.li{width:32px;height:32px;background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.lt{color:#fff;font-size:15px;font-weight:700}.lo{color:rgba(255,255,255,.55);font-size:11px;margin-left:6px}
+.usr{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:11px}
+.av{width:28px;height:28px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.bc{background:var(--wh);border-bottom:1px solid var(--gb);padding:6px 20px;font-size:10.5px;color:var(--gt);display:flex;align-items:center;gap:5px}
+.bcs{color:#ccc}.bca{color:var(--navy);font-weight:700}
+.ph{background:var(--wh);border-bottom:2px solid var(--gb);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.phl{display:flex;align-items:center;gap:12px}
+.phi{width:40px;height:40px;background:var(--bl);border:1.5px solid #90caf9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.pht{font-size:15px;font-weight:800;color:var(--ink)}.phs{font-size:11px;color:var(--gt);margin-top:2px}
+.pha{display:flex;gap:6px}
+.btn{background:var(--wh);color:var(--navy);border:1px solid var(--gb);border-radius:4px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer}
+.btn.p{background:var(--navy);color:#fff;border-color:var(--navy)}
+.main{padding:16px 20px 28px}
+.sel{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sl{font-size:11.5px;font-weight:700;color:#78350f;white-space:nowrap}
+.sb{display:flex;gap:8px}
+.sbtn{padding:7px 18px;border-radius:20px;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.sbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.sbtn.off{background:var(--wh);color:var(--gt);border-color:var(--gb)}
+.sd{font-size:10.5px;color:#92400e;margin-left:auto;font-style:italic}
+.ol{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:5px 14px;border-radius:4px 4px 0 0;display:inline-block}
+.card{background:var(--wh);border:1px solid var(--gb);border-radius:0 8px 8px 8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tabs{background:var(--wh);border-bottom:2px solid var(--navy);padding:0 16px;display:flex;gap:2px}
+.tab{padding:10px 18px;font-size:11.5px;font-weight:600;color:var(--gt);border:none;background:transparent;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;position:relative;bottom:-2px;transition:all .15s;border-radius:4px 4px 0 0;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--navy);background:#f0f4ff}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);background:#f0f4ff;font-weight:700}
+.badge{background:var(--red);color:#fff;border-radius:20px;padding:1px 7px;font-size:9.5px;font-weight:800;animation:pb 1.5s infinite}
+@keyframes pb{0%,100%{opacity:1}50%{opacity:.6}}
+.fc{padding:16px 20px}
+.sb2{background:var(--rl);border:1px solid var(--rb);border-left:4px solid var(--red);border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.si{font-size:18px;flex-shrink:0}
+.st strong{font-size:12.5px;color:var(--red);display:block}.st span{font-size:11px;color:#7f1d1d}
+.fg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;margin-bottom:14px}
+.f{display:flex;flex-direction:column;gap:3px}
+.f label{font-size:10px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.05em}
+.fv{font-size:12px;color:var(--ink);font-weight:600;background:var(--gbg);border:1px solid var(--gb);border-radius:4px;padding:5px 9px}
+.fv.e{color:var(--red);font-weight:800;background:var(--rl);border-color:var(--rb)}
+.fv.m{font-family:monospace;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vtb{background:var(--gc);border-bottom:1px solid var(--gb);padding:8px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vtl{font-size:11px;font-weight:700;color:var(--gt)}
+.fb{padding:4px 12px;border-radius:20px;font-size:10.5px;font-weight:600;cursor:pointer;border:1px solid var(--gb);background:var(--wh);color:var(--gt)}
+.fb.fa{background:var(--navy);color:#fff;border-color:var(--navy)}
+.fb.fr{background:var(--red);color:#fff;border-color:var(--red)}
+.fb.fi{background:var(--amb);color:#fff;border-color:var(--amb)}
+.vexp{margin-left:auto;background:var(--green);color:#fff;border:none;border-radius:4px;padding:5px 14px;font-size:11px;font-weight:700;cursor:pointer}
+.vl{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.vi{background:var(--wh);border:1px solid var(--gb);border-radius:6px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px}
+.vi:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.vi.r{border-left:4px solid var(--red)}.vi.a{border-left:4px solid var(--amb)}
+.vs{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;width:64px}
+.vsi{font-size:20px}
+.vsl{font-size:9px;font-weight:800;text-transform:uppercase;border-radius:20px;padding:2px 7px}
+.vsl.r{background:var(--rl);color:var(--red);border:1px solid var(--rb)}
+.vsl.a{background:var(--al);color:#78350f;border:1px solid #fde68a}
+.vb{flex:1;min-width:0}
+.vh{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.vc{font-size:10px;font-weight:700;color:var(--gt);background:var(--gbg);border-radius:4px;padding:2px 7px;font-family:monospace}
+.vt{font-size:10px;font-weight:600;color:var(--navy);background:var(--bl);border-radius:4px;padding:2px 7px}
+.vti{font-size:12.5px;font-weight:700;color:var(--ink)}
+.vd{font-size:11px;color:var(--gt);line-height:1.5;margin-bottom:6px}
+.vdr{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.vdi{display:flex;flex-direction:column;gap:1px}
+.vdl{font-size:9.5px;font-weight:700;color:var(--gt);text-transform:uppercase}
+.vdv{font-size:11px;font-weight:600;color:var(--ink);font-family:monospace}
+.va{background:var(--gbg);border:1px solid var(--gb);border-radius:4px;padding:6px 10px;font-size:10.5px;color:var(--navy);display:flex;align-items:flex-start;gap:6px;line-height:1.4}
+.vsm{background:var(--gc);border-top:1px solid var(--gb);padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.vsi2{display:flex;align-items:center;gap:6px;font-size:11px}
+.vsd{width:10px;height:10px;border-radius:50%}
+.vsd.r{background:var(--red)}.vsd.a{background:var(--amb)}
+.vsc{font-weight:800}.vsl2{color:var(--gt)}
+.vse{margin-left:auto;background:var(--green);color:#fff;border:none;border-radius:4px;padding:6px 16px;font-size:11px;font-weight:700;cursor:pointer}
+.cp{border:1.5px solid var(--rb);border-radius:8px;overflow:hidden;margin-top:14px}
+.ch{background:var(--rl);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.ch:hover{background:#ffd7d7}
+.chl{display:flex;align-items:center;gap:10px}
+.chi{font-size:16px}.cht{font-size:12.5px;font-weight:800;color:var(--red)}
+.chs{font-size:10.5px;color:#7f1d1d;margin-top:1px}
+.chr{display:flex;align-items:center;gap:10px}
+.chc{background:var(--red);color:#fff;border-radius:20px;padding:2px 10px;font-size:10.5px;font-weight:800}
+.cha{font-size:14px;color:var(--red);transition:transform .25s}
+.cha.open{transform:rotate(180deg)}
+.cb{display:none}.cb.open{display:block}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="hdr">
+<div class="logo"><div class="li">❤</div><div><span class="lt">Beyond Health</span><span class="lo">Colmena Pruebas</span></div></div>
+<div class="usr"><div class="av">CE</div><span>bh.charles.escobar</span></div>
+</div>
+<div class="bc"><span>Beyond Health</span><span class="bcs">›</span><span>Prestaciones</span><span class="bcs">›</span><span>Cuentas Medicas</span><span class="bcs">›</span><span class="bca">Radicar Cuenta Medica</span></div>
+<div class="ph">
+<div class="phl"><div class="phi">🏥</div><div><div class="pht">MODULO DE CUENTAS MEDICAS</div><div class="phs">Radicar Cuenta Medica</div></div></div>
+<div class="pha"><button class="btn">Modificar</button><button class="btn">Volver</button><button class="btn p">Acciones ▼</button></div>
+</div>
+<div class="main">
+<div class="sel">
+<span class="sl">🎛 Selecciona la opcion de diseno:</span>
+<div class="sb">
+<button class="sbtn on" id="btnA" onclick="showOpt('A')">Opcion A — Pestana Nueva</button>
+<button class="sbtn off" id="btnB" onclick="showOpt('B')">Opcion B — Panel Colapsable</button>
+</div>
+<span class="sd" id="selDesc">Pestana Validaciones con badge rojo en la barra de navegacion</span>
+</div>
+<div id="optA">
+<div class="ol">OPCION A — Pestana Validaciones con badge rojo</div>
+<div class="card">
+<div class="tabs">
+<div class="tab" id="At-rad" onclick="switchTab('A','rad')">Radicacion</div>
+<div class="tab" id="At-hist" onclick="switchTab('A','hist')">Historico de Estados</div>
+<div class="tab" id="At-nov" onclick="switchTab('A','nov')">Novedades</div>
+<div class="tab active" id="At-val" onclick="switchTab('A','val')">Validaciones <span class="badge">3</span></div>
+</div>
+<div class="fc hidden" id="Ac-rad">
+<div class="sb2"><span class="si">🔴</span><div class="st"><strong>Estado: ERROR — Validaciones de negocio fallidas</strong><span>Se encontraron 3 validaciones. Revise la pestana <b>Validaciones</b>.</span></div></div>
+<div class="fg">
+<div class="f"><label>Identificador Unico</label><div class="fv">833</div></div>
+<div class="f"><label>Sucursal</label><div class="fv">2016 – Bogota</div></div>
+<div class="f"><label>Ciudad</label><div class="fv">11001 – Bogota D.C.</div></div>
+<div class="f"><label>Numero de Radicacion</label><div class="fv">1771221156</div></div>
+<div class="f"><label>Fecha de Radicacion</label><div class="fv">29/09/2026 12:20</div></div>
+<div class="f"><label>Estado de Radicacion</label><div class="fv e">⚠ ERROR</div></div>
+<div class="f"><label>Producto</label><div class="fv">Colmena Seguros</div></div>
+<div class="f"><label>Plan</label><div class="fv">Plan Ambulatorio Basico</div></div>
+<div class="f"><label>Clase de Cuenta</label><div class="fv">Servicios Ambulatorios</div></div>
+<div class="f"><label>Prestador</label><div class="fv">Clinica del Occidente S.A.</div></div>
+<div class="f"><label>NIT</label><div class="fv">860090566</div></div>
+<div class="f"><label>Numero Factura</label><div class="fv">FACT010101</div></div>
+<div class="f"><label>Subtotal</label><div class="fv">$190.000</div></div>
+<div class="f"><label>Valor Factura</label><div class="fv">$190.000</div></div>
+<div class="f"><label>Periodo</label><div class="fv">29/09/2026</div></div>
+<div class="f" style="grid-column:1/-1"><label>CUFE</label><div class="fv m">fe6a2b1c9d4e8f3a7b2c5d9e1f4a8b3c...d7e2f5a4b8c3d6e1f9a2b7c5d4e3f8a1b</div></div>
+</div>
+</div>
+<div class="fc" id="Ac-val">
+<div class="vtb">
+<span class="vtl">Filtrar por tipo:</span>
+<button class="fb fa" onclick="filterVal('all')">Todas (3)</button>
+<button class="fb fr" onclick="filterVal('R')">Restrictivas (2)</button>
+<button class="fb fi" onclick="filterVal('I')">Informativas (1)</button>
+<button class="vexp" onclick="exportVal()">⇩ Exportar</button>
+</div>
+<div class="vl">
+<div class="vi r" data-tipo="R">
+<div class="vs"><span class="vsi">🚫</span><span class="vsl r">Restrictiva</span></div>
+<div class="vb">
+<div class="vh">
+<span class="vc">VAL-001</span>
+<span class="vt">Contratacion</span>
+<span class="vti">Prestacion no contratada con el prestador</span>
+</div>
+<div class="vd">El codigo de prestacion <b>890201</b> (Consulta medicina general) no se encuentra activo en el contrato vigente con Clinica del Occidente S.A. para el periodo 29/09/2026.</div>
+<div class="vdr">
+<div class="vdi"><span class="vdl">Codigo encontrado</span><span class="vdv">890201</span></div>
+<div class="vdi"><span class="vdl">Contrato</span><span class="vdv">CONT-2026-0045</span></div>
+<div class="vdi"><span class="vdl">Vigencia</span><span class="vdv">01/01/2026 - 31/12/2026</span></div>
+</div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Verificar el codigo de prestacion en el contrato vigente o solicitar actualizacion del portafolio de servicios contratados.</span></div>
+</div>
+</div>
+<div class="vi r" data-tipo="R">
+<div class="vs"><span class="vsi">🚫</span><span class="vsl r">Restrictiva</span></div>
+<div class="vb">
+<div class="vh">
+<span class="vc">VAL-007</span>
+<span class="vt">Afiliacion</span>
+<span class="vti">Afiliado no activo en la fecha de atencion</span>
+</div>
+<div class="vd">El afiliado con documento <b>1023456789</b> no registra estado activo en la base de datos de afiliados para la fecha de atencion <b>29/09/2026</b>. Estado encontrado: SUSPENDIDO.</div>
+<div class="vdr">
+<div class="vdi"><span class="vdl">Documento</span><span class="vdv">1023456789</span></div>
+<div class="vdi"><span class="vdl">Estado encontrado</span><span class="vdv">SUSPENDIDO</span></div>
+<div class="vdi"><span class="vdl">Fecha suspension</span><span class="vdv">15/08/2026</span></div>
+</div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Verificar el estado de afiliacion del paciente en la fecha de atencion. Si la atencion fue de urgencias, aplicar normativa de urgencias (Ley 100/1993 Art. 168).</span></div>
+</div>
+</div>
+<div class="vi a" data-tipo="I">
+<div class="vs"><span class="vsi">⚠</span><span class="vsl a">Informativa</span></div>
+<div class="vb">
+<div class="vh">
+<span class="vc">VAL-015</span>
+<span class="vt">RIPS</span>
+<span class="vti">Diagnostico principal no corresponde al tipo de atencion</span>
+</div>
+<div class="vd">El diagnostico principal <b>Z00.0</b> (Examen medico general) no es coherente con el tipo de atencion <b>URGENCIAS</b> registrado en los RIPS. Se recomienda verificar la codificacion.</div>
+<div class="vdr">
+<div class="vdi"><span class="vdl">Diagnostico</span><span class="vdv">Z00.0</span></div>
+<div class="vdi"><span class="vdl">Tipo atencion</span><span class="vdv">URGENCIAS</span></div>
+<div class="vdi"><span class="vdl">Norma</span><span class="vdv">Res. 3374/2000</span></div>
+</div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Revisar la codificacion del diagnostico principal. Esta validacion es informativa y no impide la radicacion, pero puede generar glosas en auditoria.</span></div>
+</div>
+</div>
+</div>
+<div class="vsm">
+<div class="vsi2"><div class="vsd r"></div><span class="vsc">2</span><span class="vsl2">Restrictivas — impiden radicacion</span></div>
+<div class="vsi2"><div class="vsd a"></div><span class="vsc">1</span><span class="vsl2">Informativa — requiere revision</span></div>
+<button class="vse" onclick="alert('Contacte al area de sistemas para corregir las validaciones restrictivas.')">📞 Solicitar soporte</button>
+</div>
+</div>
+<div class="fc hidden" id="Ac-hist"><p style="color:var(--gt);font-size:12px;padding:20px 0">Historico de estados no disponible en modo ERROR.</p></div>
+<div class="fc hidden" id="Ac-nov"><p style="color:var(--gt);font-size:12px;padding:20px 0">No hay novedades registradas para esta cuenta medica.</p></div>
+</div></div>
+</div>
+<!-- OPCION B -->
+<div class="hidden" id="optB">
+<div class="ol">OPCION B — Panel colapsable dentro de la pestana Radicacion</div>
+<div class="card">
+<div class="tabs">
+<div class="tab active" id="Bt-rad" onclick="switchTab('B','rad')">Radicacion</div>
+<div class="tab" id="Bt-hist" onclick="switchTab('B','hist')">Historico de Estados</div>
+<div class="tab" id="Bt-nov" onclick="switchTab('B','nov')">Novedades</div>
+</div>
+<div class="fc" id="Bc-rad">
+<div class="sb2"><span class="si">🔴</span><div class="st"><strong>Estado: ERROR — Validaciones de negocio fallidas</strong><span>Se encontraron 3 validaciones. Expanda el panel de validaciones para ver el detalle.</span></div></div>
+<div class="fg">
+<div class="f"><label>Identificador Unico</label><div class="fv">833</div></div>
+<div class="f"><label>Sucursal</label><div class="fv">2016 – Bogota</div></div>
+<div class="f"><label>Ciudad</label><div class="fv">11001 – Bogota D.C.</div></div>
+<div class="f"><label>Numero de Radicacion</label><div class="fv">1771221156</div></div>
+<div class="f"><label>Fecha de Radicacion</label><div class="fv">29/09/2026 12:20</div></div>
+<div class="f"><label>Estado de Radicacion</label><div class="fv e">⚠ ERROR</div></div>
+<div class="f"><label>Producto</label><div class="fv">Colmena Seguros</div></div>
+<div class="f"><label>Plan</label><div class="fv">Plan Ambulatorio Basico</div></div>
+<div class="f"><label>Clase de Cuenta</label><div class="fv">Servicios Ambulatorios</div></div>
+<div class="f"><label>Prestador</label><div class="fv">Clinica del Occidente S.A.</div></div>
+<div class="f"><label>NIT</label><div class="fv">860090566</div></div>
+<div class="f"><label>Numero Factura</label><div class="fv">FACT010101</div></div>
+<div class="f"><label>Subtotal</label><div class="fv">$190.000</div></div>
+<div class="f"><label>Valor Factura</label><div class="fv">$190.000</div></div>
+<div class="f"><label>Periodo</label><div class="fv">29/09/2026</div></div>
+<div class="f" style="grid-column:1/-1"><label>CUFE</label><div class="fv m">fe6a2b1c9d4e8f3a7b2c5d9e1f4a8b3c...d7e2f5a4b8c3d6e1f9a2b7c5d4e3f8a1b</div></div>
+</div>
+<div class="cp">
+<div class="ch" onclick="togglePanel()">
+<div class="chl">
+<span class="chi">🚫</span>
+<div><div class="cht">Validaciones de negocio fallidas</div><div class="chs">3 validaciones encontradas — 2 restrictivas impiden la radicacion</div></div>
+</div>
+<div class="chr">
+<span class="chc">3 errores</span>
+<span class="cha open" id="panelArrow">▼</span>
+</div>
+</div>
+<div class="cb open" id="panelBody">
+<div class="vtb">
+<span class="vtl">Filtrar:</span>
+<button class="fb fa" id="bfAll" onclick="filterValB('all')">Todas (3)</button>
+<button class="fb fr" id="bfR" onclick="filterValB('R')">Restrictivas (2)</button>
+<button class="fb fi" id="bfI" onclick="filterValB('I')">Informativas (1)</button>
+</div>
+<div class="vl" id="panelValList">
+<div class="vi r" data-tipo="R">
+<div class="vs"><span class="vsi">🚫</span><span class="vsl r">Restrictiva</span></div>
+<div class="vb">
+<div class="vh"><span class="vc">VAL-001</span><span class="vt">Contratacion</span><span class="vti">Prestacion no contratada con el prestador</span></div>
+<div class="vd">El codigo <b>890201</b> no se encuentra activo en el contrato vigente con Clinica del Occidente S.A. para el periodo 29/09/2026.</div>
+<div class="vdr"><div class="vdi"><span class="vdl">Codigo encontrado</span><span class="vdv">890201</span></div><div class="vdi"><span class="vdl">Contrato</span><span class="vdv">CONT-2026-0045</span></div><div class="vdi"><span class="vdl">Vigencia</span><span class="vdv">01/01/2026 - 31/12/2026</span></div></div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Verificar el codigo de prestacion en el contrato vigente o solicitar actualizacion del portafolio de servicios contratados.</span></div>
+</div>
+</div>
+<div class="vi r" data-tipo="R">
+<div class="vs"><span class="vsi">🚫</span><span class="vsl r">Restrictiva</span></div>
+<div class="vb">
+<div class="vh"><span class="vc">VAL-007</span><span class="vt">Afiliacion</span><span class="vti">Afiliado no activo en la fecha de atencion</span></div>
+<div class="vd">El afiliado <b>1023456789</b> registra estado SUSPENDIDO para la fecha 29/09/2026.</div>
+<div class="vdr"><div class="vdi"><span class="vdl">Documento</span><span class="vdv">1023456789</span></div><div class="vdi"><span class="vdl">Estado encontrado</span><span class="vdv">SUSPENDIDO</span></div><div class="vdi"><span class="vdl">Fecha suspension</span><span class="vdv">15/08/2026</span></div></div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Verificar estado de afiliacion. Si fue urgencia, aplicar Art. 168 Ley 100/1993.</span></div>
+</div>
+</div>
+<div class="vi a" data-tipo="I">
+<div class="vs"><span class="vsi">⚠</span><span class="vsl a">Informativa</span></div>
+<div class="vb">
+<div class="vh"><span class="vc">VAL-015</span><span class="vt">RIPS</span><span class="vti">Diagnostico no corresponde al tipo de atencion</span></div>
+<div class="vd">Diagnostico <b>Z00.0</b> no es coherente con tipo de atencion URGENCIAS (Res. 3374/2000).</div>
+<div class="vdr"><div class="vdi"><span class="vdl">Diagnostico</span><span class="vdv">Z00.0</span></div><div class="vdi"><span class="vdl">Tipo atencion</span><span class="vdv">URGENCIAS</span></div><div class="vdi"><span class="vdl">Norma</span><span class="vdv">Res. 3374/2000</span></div></div>
+<div class="va">💡 <span><b>Accion sugerida:</b> Revisar codificacion del diagnostico. No impide radicacion pero puede generar glosas en auditoria.</span></div>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+<div class="fc hidden" id="Bc-hist"><p style="color:var(--gt);font-size:12px;padding:20px 0">Historico de estados no disponible en modo ERROR.</p></div>
+<div class="fc hidden" id="Bc-nov"><p style="color:var(--gt);font-size:12px;padding:20px 0">No hay novedades registradas.</p></div>
+</div></div>
+
+
+<script>
+function showOpt(opt) {
+  document.getElementById('optA').classList.toggle('hidden', opt !== 'A');
+  document.getElementById('optB').classList.toggle('hidden', opt !== 'B');
+  document.getElementById('btnA').className = opt === 'A' ? 'sbtn on' : 'sbtn off';
+  document.getElementById('btnB').className = opt === 'B' ? 'sbtn on' : 'sbtn off';
+  document.getElementById('selDesc').textContent = opt === 'A'
+    ? 'Pestana Validaciones con badge rojo en la barra de navegacion'
+    : 'Panel colapsable dentro de la pestana Radicacion';
+  // Resetear siempre a la pestana Radicacion al cambiar de opcion
+  if (opt === 'A') {
+    switchTab('A', 'val');
+  } else {
+    switchTab('B', 'rad');
+  }
+}
+function switchTab(prefix, tab) {
+  var tabs = prefix === 'A' ? ['rad','hist','nov','val'] : ['rad','hist','nov'];
+  tabs.forEach(function(t) {
+    var c = document.getElementById(prefix + 'c-' + t);
+    var b = document.getElementById(prefix + 't-' + t);
+    if (c) c.classList.toggle('hidden', t !== tab);
+    if (b) b.classList.toggle('active', t === tab);
+  });
+}
+function togglePanel() {
+  var body = document.getElementById('panelBody');
+  var arrow = document.getElementById('panelArrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+function filterVal(tipo) {
+  document.querySelectorAll('#optA .vi').forEach(function(el) {
+    el.style.display = (tipo === 'all' || el.dataset.tipo === tipo) ? 'flex' : 'none';
+  });
+  document.querySelectorAll('#optA .fb').forEach(function(b) { b.classList.remove('fa'); });
+  var map = {'all':'#optA .fb:nth-child(2)','R':'#optA .fb:nth-child(3)','I':'#optA .fb:nth-child(4)'};
+  var el = document.querySelector(map[tipo]);
+  if (el) el.classList.add('fa');
+}
+function filterValB(tipo) {
+  document.querySelectorAll('#panelValList .vi').forEach(function(el) {
+    el.style.display = (tipo === 'all' || el.dataset.tipo === tipo) ? 'flex' : 'none';
+  });
+  ['bfAll','bfR','bfI'].forEach(function(id) {
+    var b = document.getElementById(id);
+    if (b) b.classList.remove('fa');
+  });
+  var activeId = tipo === 'all' ? 'bfAll' : tipo === 'R' ? 'bfR' : 'bfI';
+  var active = document.getElementById(activeId);
+  if (active) active.classList.add('fa');
+}
+function exportVal() { alert('Exportando validaciones a PDF...'); }
+
+// Inicializar estado correcto al cargar
+window.onload = function() {
+  // Opcion A: mostrar pestana Validaciones por defecto
+  switchTab('A', 'val');
+  // Opcion B: mostrar pestana Radicacion por defecto
+  switchTab('B', 'rad');
+};
+</script>
+</body>
+</html>

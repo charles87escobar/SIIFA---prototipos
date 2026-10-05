@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Beyond Health - Reporte de Validaciones por Lote</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#1a2e4a;--green:#2d6a2d;--gd:#1e4d1e;
+  --red:#c62828;--rl:#ffebee;--rb:#ef9a9a;
+  --amb:#f59e0b;--al:#fffbeb;--ab:#fde68a;
+  --ok:#2e7d32;--ol:#e8f5e9;--ob:#a5d6a7;
+  --gbg:#f0f2f5;--gc:#f8f9fa;--gb:#dee2e6;--gt:#6c757d;
+  --ink:#212529;--wh:#fff;--bl:#e3f2fd;--navy2:#1565c0
+}
+body{font-family:"Segoe UI",Arial,sans-serif;font-size:12.5px;background:var(--gbg);color:var(--ink)}
+
+/* HEADER */
+.hdr{background:var(--navy);height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 20px}
+.logo{display:flex;align-items:center;gap:10px}
+.li{width:32px;height:32px;background:linear-gradient(135deg,#e74c3c,#c0392b);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.lt{color:#fff;font-size:15px;font-weight:700}.lo{color:rgba(255,255,255,.55);font-size:11px;margin-left:6px}
+.usr{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.8);font-size:11px}
+.av{width:28px;height:28px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+
+/* BREADCRUMB */
+.bc{background:var(--wh);border-bottom:1px solid var(--gb);padding:6px 20px;font-size:10.5px;color:var(--gt);display:flex;align-items:center;gap:5px}
+.bcs{color:#ccc}.bca{color:var(--navy);font-weight:700}
+
+/* PAGE HEADER */
+.ph{background:var(--wh);border-bottom:2px solid var(--gb);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.phl{display:flex;align-items:center;gap:12px}
+.phi{width:40px;height:40px;background:var(--bl);border:1.5px solid #90caf9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.pht{font-size:15px;font-weight:800;color:var(--ink)}.phs{font-size:11px;color:var(--gt);margin-top:2px}
+.pha{display:flex;gap:6px}
+.btn{background:var(--wh);color:var(--navy);border:1px solid var(--gb);border-radius:4px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px}
+.btn:hover{background:var(--gbg)}
+.btn.p{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.g{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* MAIN */
+.main{padding:16px 20px 32px}
+
+/* LOTE INFO BAR */
+.lote-bar{background:var(--wh);border:1px solid var(--gb);border-radius:8px;padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.lote-field{display:flex;flex-direction:column;gap:2px}
+.lote-label{font-size:9.5px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.05em}
+.lote-value{font-size:12.5px;font-weight:700;color:var(--ink)}
+.lote-sep{width:1px;height:36px;background:var(--gb);flex-shrink:0}
+.lote-status{margin-left:auto;background:var(--al);border:1px solid var(--ab);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#78350f;display:flex;align-items:center;gap:6px}
+
+/* KPI CARDS */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.kpi{background:var(--wh);border:1px solid var(--gb);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.kpi:hover{box-shadow:0 2px 8px rgba(0,0,0,.1);transform:translateY(-1px)}
+.kpi.active{border-width:2px}
+.kpi.all{border-color:var(--navy2)}.kpi.all.active{background:var(--bl)}
+.kpi.ok{border-color:var(--ok)}.kpi.ok.active{background:var(--ol)}
+.kpi.err{border-color:var(--red)}.kpi.err.active{background:var(--rl)}
+.kpi.warn{border-color:var(--amb)}.kpi.warn.active{background:var(--al)}
+.kpi.pend{border-color:var(--gt)}.kpi.pend.active{background:var(--gc)}
+.kpi-num{font-size:28px;font-weight:800;line-height:1}
+.kpi.all .kpi-num{color:var(--navy2)}
+.kpi.ok .kpi-num{color:var(--ok)}
+.kpi.err .kpi-num{color:var(--red)}
+.kpi.warn .kpi-num{color:var(--amb)}
+.kpi.pend .kpi-num{color:var(--gt)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--gt)}
+.kpi-pct{font-size:10px;color:var(--gt)}
+.kpi-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 8px 8px}
+.kpi.all .kpi-bar{background:var(--navy2);width:100%}
+.kpi.ok .kpi-bar{background:var(--ok);width:65%}
+.kpi.err .kpi-bar{background:var(--red);width:23%}
+.kpi.warn .kpi-bar{background:var(--amb);width:11%}
+.kpi.pend .kpi-bar{background:var(--gt);width:1%}
+
+/* TOOLBAR */
+.toolbar{background:var(--wh);border:1px solid var(--gb);border-radius:8px 8px 0 0;padding:10px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:none}
+.search-box{display:flex;align-items:center;gap:6px;background:var(--gbg);border:1px solid var(--gb);border-radius:4px;padding:5px 10px;flex:1;max-width:280px}
+.search-box input{border:none;background:transparent;font-size:11.5px;color:var(--ink);outline:none;width:100%}
+.search-box input::placeholder{color:var(--gt)}
+.filter-group{display:flex;align-items:center;gap:6px}
+.filter-label{font-size:11px;color:var(--gt);font-weight:600}
+select{border:1px solid var(--gb);border-radius:4px;padding:5px 8px;font-size:11px;color:var(--ink);background:var(--wh);cursor:pointer}
+.toolbar-right{margin-left:auto;display:flex;gap:6px}
+
+/* TABLE */
+.table-wrap{background:var(--wh);border:1px solid var(--gb);border-radius:0 0 8px 8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead tr{background:var(--navy);color:#fff}
+thead th{padding:10px 12px;font-size:11px;font-weight:700;text-align:left;white-space:nowrap;letter-spacing:.03em}
+thead th.sort{cursor:pointer;user-select:none}
+thead th.sort:hover{background:rgba(255,255,255,.1)}
+tbody tr{border-bottom:1px solid var(--gb);transition:background .1s}
+tbody tr:hover{background:#f0f4ff}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:9px 12px;font-size:11.5px;vertical-align:middle}
+.td-num{font-family:monospace;font-size:11px;color:var(--gt)}
+.td-fact{font-weight:700;color:var(--navy);cursor:pointer}
+.td-fact:hover{text-decoration:underline}
+.td-prest{font-size:11px}
+.td-val{font-size:11.5px;font-weight:600}
+.td-money{font-family:monospace;font-size:11.5px;text-align:right}
+
+/* BADGES */
+.badge-ok{background:var(--ol);color:var(--ok);border:1px solid var(--ob);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;white-space:nowrap}
+.badge-err{background:var(--rl);color:var(--red);border:1px solid var(--rb);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;white-space:nowrap}
+.badge-warn{background:var(--al);color:#78350f;border:1px solid var(--ab);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;white-space:nowrap}
+.badge-pend{background:var(--gc);color:var(--gt);border:1px solid var(--gb);border-radius:20px;padding:2px 10px;font-size:10px;font-weight:700;white-space:nowrap}
+
+/* VAL PILLS */
+.val-pills{display:flex;gap:4px;flex-wrap:wrap}
+.pill-r{background:var(--rl);color:var(--red);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700}
+.pill-i{background:var(--al);color:#78350f;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700}
+.pill-ok{background:var(--ol);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700}
+
+/* ACTION BTNS */
+.act-btn{background:transparent;border:1px solid var(--gb);border-radius:4px;padding:3px 8px;font-size:10.5px;cursor:pointer;color:var(--navy);font-weight:600}
+.act-btn:hover{background:var(--bl)}
+
+/* PAGINATION */
+.pagination{background:var(--gc);border-top:1px solid var(--gb);padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.pag-info{font-size:11px;color:var(--gt)}
+.pag-btns{display:flex;gap:4px}
+.pag-btn{background:var(--wh);border:1px solid var(--gb);border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--ink)}
+.pag-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pag-btn:hover:not(.active){background:var(--gbg)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--wh);border-radius:8px;width:700px;max-width:95vw;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal-hdr{background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:14px;font-weight:700}
+.modal-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px}
+.modal-close{background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0 4px}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-section{margin-bottom:16px}
+.modal-section-title{font-size:11px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--gb)}
+.modal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 16px;margin-bottom:12px}
+.mf{display:flex;flex-direction:column;gap:2px}
+.mf label{font-size:9.5px;font-weight:700;color:var(--gt);text-transform:uppercase}
+.mf span{font-size:11.5px;font-weight:600;color:var(--ink)}
+.mf span.err{color:var(--red)}
+.modal-val-item{background:var(--gbg);border:1px solid var(--gb);border-radius:6px;padding:10px 12px;margin-bottom:8px;border-left:4px solid var(--red)}
+.modal-val-item.info{border-left-color:var(--amb)}
+.mvi-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.mvi-code{font-size:10px;font-weight:700;color:var(--gt);font-family:monospace;background:var(--wh);border:1px solid var(--gb);border-radius:3px;padding:1px 5px}
+.mvi-tipo{font-size:10px;font-weight:700;color:var(--red);background:var(--rl);border-radius:3px;padding:1px 6px}
+.mvi-tipo.info{color:#78350f;background:var(--al)}
+.mvi-title{font-size:12px;font-weight:700;color:var(--ink)}
+.mvi-desc{font-size:11px;color:var(--gt);line-height:1.5;margin-bottom:6px}
+.mvi-action{font-size:10.5px;color:var(--navy);background:var(--bl);border-radius:4px;padding:5px 8px;line-height:1.4}
+.modal-ftr{background:var(--gc);border-top:1px solid var(--gb);padding:12px 20px;display:flex;justify-content:flex-end;gap:8px}
+
+/* SUMMARY PANEL */
+.summary-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.summary-card{background:var(--wh);border:1px solid var(--gb);border-radius:8px;padding:14px 16px}
+.sc-title{font-size:11px;font-weight:700;color:var(--gt);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px}
+.sc-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--gbg)}
+.sc-row:last-child{border-bottom:none}
+.sc-label{font-size:11.5px;color:var(--ink)}
+.sc-val{font-size:11.5px;font-weight:700}
+.sc-val.r{color:var(--red)}.sc-val.a{color:#78350f}.sc-val.g{color:var(--ok)}
+.sc-bar-wrap{flex:1;margin:0 10px;height:6px;background:var(--gbg);border-radius:3px;overflow:hidden}
+.sc-bar{height:100%;border-radius:3px}
+.sc-bar.r{background:var(--red)}.sc-bar.a{background:var(--amb)}.sc-bar.g{background:var(--ok)}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo"><div class="li">&#10084;</div><div><span class="lt">Beyond Health</span><span class="lo">Colmena Pruebas</span></div></div>
+  <div class="usr"><div class="av">CE</div><span>bh.charles.escobar</span></div>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="bc">
+  <span>Beyond Health</span><span class="bcs">&rsaquo;</span>
+  <span>Prestaciones</span><span class="bcs">&rsaquo;</span>
+  <span>Cuentas Medicas</span><span class="bcs">&rsaquo;</span>
+  <span>Pre-radicado</span><span class="bcs">&rsaquo;</span>
+  <span class="bca">Reporte de Validaciones por Lote</span>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="ph">
+  <div class="phl">
+    <div class="phi">&#128196;</div>
+    <div><div class="pht">REPORTE DE VALIDACIONES POR LOTE</div><div class="phs">Lote LOTE-2026-09-001 &mdash; Procesado el 29/09/2026 12:20</div></div>
+  </div>
+  <div class="pha">
+    <button class="btn" onclick="exportExcel()">&#128196; Exportar Excel</button>
+    <button class="btn" onclick="exportPDF()">&#128196; Exportar PDF</button>
+    <button class="btn g" onclick="alert('Reprocesando facturas con error...')">&#8635; Reprocesar errores</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- LOTE INFO BAR -->
+<div class="lote-bar">
+  <div class="lote-field"><span class="lote-label">Lote</span><span class="lote-value">LOTE-2026-09-001</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">Fuente</span><span class="lote-value">Invoway &mdash; FEV JSON</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">Prestador</span><span class="lote-value">Clinica del Occidente S.A.</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">NIT</span><span class="lote-value">860090566</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">Periodo</span><span class="lote-value">Sep 2026</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">Total facturas</span><span class="lote-value">150</span></div>
+  <div class="lote-sep"></div>
+  <div class="lote-field"><span class="lote-label">Valor total</span><span class="lote-value">$48.750.000</span></div>
+  <div class="lote-status">&#9203; Procesado &mdash; 29/09/2026 12:20</div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpis">
+  <div class="kpi all active" onclick="filterTable('all')">
+    <span class="kpi-num">150</span>
+    <span class="kpi-label">Total facturas</span>
+    <span class="kpi-pct">100% del lote</span>
+    <div class="kpi-bar"></div>
+  </div>
+  <div class="kpi ok" onclick="filterTable('ok')">
+    <span class="kpi-num">98</span>
+    <span class="kpi-label">Sin errores</span>
+    <span class="kpi-pct">65.3% &mdash; listas para radicar</span>
+    <div class="kpi-bar"></div>
+  </div>
+  <div class="kpi err" onclick="filterTable('err')">
+    <span class="kpi-num">35</span>
+    <span class="kpi-label">Con errores restrictivos</span>
+    <span class="kpi-pct">23.3% &mdash; no pueden radicarse</span>
+    <div class="kpi-bar"></div>
+  </div>
+  <div class="kpi warn" onclick="filterTable('warn')">
+    <span class="kpi-num">16</span>
+    <span class="kpi-label">Solo informativas</span>
+    <span class="kpi-pct">10.7% &mdash; requieren revision</span>
+    <div class="kpi-bar"></div>
+  </div>
+  <div class="kpi pend" onclick="filterTable('pend')">
+    <span class="kpi-num">1</span>
+    <span class="kpi-label">En proceso</span>
+    <span class="kpi-pct">0.7% &mdash; procesando</span>
+    <div class="kpi-bar"></div>
+  </div>
+</div>
+
+<!-- RESUMEN POR TIPO -->
+<div class="summary-row">
+  <div class="summary-card">
+    <div class="sc-title">&#128683; Errores restrictivos por tipo de validacion</div>
+    <div class="sc-row">
+      <span class="sc-label">Prestacion no contratada (VAL-001)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar r" style="width:60%"></div></div>
+      <span class="sc-val r">21</span>
+    </div>
+    <div class="sc-row">
+      <span class="sc-label">Afiliado no activo (VAL-007)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar r" style="width:34%"></div></div>
+      <span class="sc-val r">12</span>
+    </div>
+    <div class="sc-row">
+      <span class="sc-label">Prestador no en red (VAL-003)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar r" style="width:6%"></div></div>
+      <span class="sc-val r">2</span>
+    </div>
+  </div>
+  <div class="summary-card">
+    <div class="sc-title">&#9888; Validaciones informativas por tipo</div>
+    <div class="sc-row">
+      <span class="sc-label">Diagnostico vs tipo atencion (VAL-015)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar a" style="width:56%"></div></div>
+      <span class="sc-val a">9</span>
+    </div>
+    <div class="sc-row">
+      <span class="sc-label">Codigo CUPS sin descripcion (VAL-022)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar a" style="width:31%"></div></div>
+      <span class="sc-val a">5</span>
+    </div>
+    <div class="sc-row">
+      <span class="sc-label">Fecha atencion fuera de rango (VAL-009)</span>
+      <div class="sc-bar-wrap"><div class="sc-bar a" style="width:13%"></div></div>
+      <span class="sc-val a">2</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="search-box">
+    <span style="color:var(--gt);font-size:13px">&#128269;</span>
+    <input type="text" placeholder="Buscar por factura, NIT, afiliado..." oninput="searchTable(this.value)">
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Estado:</span>
+    <select onchange="filterBySelect(this.value)">
+      <option value="all">Todos los estados</option>
+      <option value="ok">Sin errores</option>
+      <option value="err">Con errores restrictivos</option>
+      <option value="warn">Solo informativas</option>
+      <option value="pend">En proceso</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Tipo error:</span>
+    <select onchange="filterByTipoError(this.value)">
+      <option value="all">Todos los tipos</option>
+      <option value="VAL-001">VAL-001 Contratacion</option>
+      <option value="VAL-007">VAL-007 Afiliacion</option>
+      <option value="VAL-015">VAL-015 RIPS</option>
+      <option value="VAL-003">VAL-003 Red prestadores</option>
+    </select>
+  </div>
+  <div class="toolbar-right">
+    <span style="font-size:11px;color:var(--gt);align-self:center" id="resultCount">Mostrando 10 de 150 facturas</span>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-wrap">
+<table id="mainTable">
+  <thead>
+    <tr>
+      <th class="sort" onclick="sortTable(0)">#</th>
+      <th class="sort" onclick="sortTable(1)">Factura &#8597;</th>
+      <th>Prestador</th>
+      <th class="sort" onclick="sortTable(3)">Afiliado</th>
+      <th class="sort" onclick="sortTable(4)">Valor &#8597;</th>
+      <th>Estado</th>
+      <th>Validaciones</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody">
+  </tbody>
+</table>
+<div class="pagination">
+  <span class="pag-info" id="pagInfo">Pagina 1 de 15 &mdash; 150 facturas en total</span>
+  <div class="pag-btns">
+    <button class="pag-btn" onclick="changePage(-1)">&#8592; Anterior</button>
+    <button class="pag-btn active" id="pag1">1</button>
+    <button class="pag-btn" id="pag2" onclick="changePage(1)">2</button>
+    <button class="pag-btn" id="pag3">3</button>
+    <button class="pag-btn">...</button>
+    <button class="pag-btn">15</button>
+    <button class="pag-btn" onclick="changePage(1)">Siguiente &#8594;</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="modalTitle">Detalle de Validaciones</div>
+        <div class="modal-sub" id="modalSub">Factura FACT-001</div>
+      </div>
+      <button class="modal-close" onclick="closeModalBtn()">&#10005;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-ftr">
+      <button class="btn" onclick="closeModalBtn()">Cerrar</button>
+      <button class="btn p" onclick="alert('Abriendo formulario de radicacion...')">Ir a Radicacion</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// DATA
+var facturas = [
+  {id:1, fact:'FACT-001', prest:'Clinica del Occidente S.A.', afil:'1023456789 - Juan Perez', valor:190000, estado:'err', vals:[{cod:'VAL-001',tipo:'R',titulo:'Prestacion no contratada',desc:'Codigo 890201 no activo en contrato CONT-2026-0045',accion:'Verificar portafolio de servicios contratados'},{cod:'VAL-007',tipo:'R',titulo:'Afiliado no activo',desc:'Afiliado 1023456789 en estado SUSPENDIDO desde 15/08/2026',accion:'Verificar estado de afiliacion o aplicar Art. 168 Ley 100/1993'},{cod:'VAL-015',tipo:'I',titulo:'Diagnostico vs tipo atencion',desc:'Z00.0 no coherente con tipo URGENCIAS',accion:'Revisar codificacion del diagnostico'}]},
+  {id:2, fact:'FACT-002', prest:'Clinica del Occidente S.A.', afil:'9876543210 - Maria Lopez', valor:450000, estado:'ok', vals:[]},
+  {id:3, fact:'FACT-003', prest:'Clinica del Occidente S.A.', afil:'1122334455 - Carlos Ruiz', valor:280000, estado:'warn', vals:[{cod:'VAL-015',tipo:'I',titulo:'Diagnostico vs tipo atencion',desc:'J06.9 no coherente con tipo CONSULTA EXTERNA',accion:'Revisar codificacion del diagnostico'}]},
+  {id:4, fact:'FACT-004', prest:'Clinica del Occidente S.A.', afil:'5544332211 - Ana Torres', valor:125000, estado:'err', vals:[{cod:'VAL-001',tipo:'R',titulo:'Prestacion no contratada',desc:'Codigo 890302 no activo en contrato vigente',accion:'Verificar portafolio de servicios contratados'}]},
+  {id:5, fact:'FACT-005', prest:'Clinica del Occidente S.A.', afil:'6677889900 - Luis Gomez', valor:890000, estado:'ok', vals:[]},
+  {id:6, fact:'FACT-006', prest:'Clinica del Occidente S.A.', afil:'1234567890 - Sofia Diaz', valor:340000, estado:'err', vals:[{cod:'VAL-007',tipo:'R',titulo:'Afiliado no activo',desc:'Afiliado 1234567890 en estado RETIRADO desde 01/09/2026',accion:'Verificar estado de afiliacion'}]},
+  {id:7, fact:'FACT-007', prest:'Clinica del Occidente S.A.', afil:'9988776655 - Pedro Mora', valor:210000, estado:'ok', vals:[]},
+  {id:8, fact:'FACT-008', prest:'Clinica del Occidente S.A.', afil:'4433221100 - Laura Vega', valor:560000, estado:'warn', vals:[{cod:'VAL-022',tipo:'I',titulo:'Codigo CUPS sin descripcion',desc:'Codigo 890501 no tiene descripcion en tabla CUPS vigente',accion:'Verificar codigo CUPS en resolucion vigente'}]},
+  {id:9, fact:'FACT-009', prest:'Clinica del Occidente S.A.', afil:'7788990011 - Diego Castro', valor:175000, estado:'err', vals:[{cod:'VAL-001',tipo:'R',titulo:'Prestacion no contratada',desc:'Codigo 890201 no activo en contrato CONT-2026-0045',accion:'Verificar portafolio de servicios contratados'},{cod:'VAL-007',tipo:'R',titulo:'Afiliado no activo',desc:'Afiliado 7788990011 en estado SUSPENDIDO',accion:'Verificar estado de afiliacion'}]},
+  {id:10, fact:'FACT-010', prest:'Clinica del Occidente S.A.', afil:'3322110099 - Carmen Rios', valor:420000, estado:'pend', vals:[]}
+];
+
+var currentFilter = 'all';
+var currentPage = 1;
+
+function getEstadoBadge(estado) {
+  if (estado === 'ok') return '<span class="badge-ok">&#10003; Sin errores</span>';
+  if (estado === 'err') return '<span class="badge-err">&#128683; Error restrictivo</span>';
+  if (estado === 'warn') return '<span class="badge-warn">&#9888; Informativa</span>';
+  return '<span class="badge-pend">&#9203; En proceso</span>';
+}
+
+function getValPills(vals) {
+  if (!vals || vals.length === 0) return '<span class="pill-ok">&#10003; Sin validaciones</span>';
+  var r = vals.filter(function(v){return v.tipo==='R';}).length;
+  var i = vals.filter(function(v){return v.tipo==='I';}).length;
+  var html = '';
+  if (r > 0) html += '<span class="pill-r">'+r+' Restrictiva'+(r>1?'s':'')+'</span>';
+  if (i > 0) html += '<span class="pill-i">'+i+' Informativa'+(i>1?'s':'')+'</span>';
+  return '<div class="val-pills">'+html+'</div>';
+}
+
+function renderTable(data) {
+  var tbody = document.getElementById('tableBody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gt)">No se encontraron facturas con los filtros aplicados.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(function(f) {
+    return '<tr data-estado="'+f.estado+'">' +
+      '<td class="td-num">'+f.id+'</td>' +
+      '<td class="td-fact" onclick="openModal('+f.id+')">'+f.fact+'</td>' +
+      '<td class="td-prest">'+f.prest+'</td>' +
+      '<td style="font-size:11px">'+f.afil+'</td>' +
+      '<td class="td-money">$'+f.valor.toLocaleString('es-CO')+'</td>' +
+      '<td>'+getEstadoBadge(f.estado)+'</td>' +
+      '<td>'+getValPills(f.vals)+'</td>' +
+      '<td><button class="act-btn" onclick="openModal('+f.id+')">Ver detalle</button></td>' +
+    '</tr>';
+  }).join('');
+  document.getElementById('resultCount').textContent = 'Mostrando '+data.length+' de 150 facturas';
+}
+
+function filterTable(estado) {
+  currentFilter = estado;
+  document.querySelectorAll('.kpi').forEach(function(k){k.classList.remove('active');});
+  var map = {all:'.kpi.all',ok:'.kpi.ok',err:'.kpi.err',warn:'.kpi.warn',pend:'.kpi.pend'};
+  var el = document.querySelector(map[estado]);
+  if (el) el.classList.add('active');
+  var filtered = estado === 'all' ? facturas : facturas.filter(function(f){return f.estado===estado;});
+  renderTable(filtered);
+}
+
+function filterBySelect(val) { filterTable(val); }
+
+function filterByTipoError(cod) {
+  if (cod === 'all') { renderTable(facturas); return; }
+  var filtered = facturas.filter(function(f){
+    return f.vals && f.vals.some(function(v){return v.cod===cod;});
+  });
+  renderTable(filtered);
+}
+
+function searchTable(q) {
+  if (!q) { renderTable(facturas); return; }
+  q = q.toLowerCase();
+  var filtered = facturas.filter(function(f){
+    return f.fact.toLowerCase().includes(q) || f.afil.toLowerCase().includes(q) || f.prest.toLowerCase().includes(q);
+  });
+  renderTable(filtered);
+}
+
+function openModal(id) {
+  var f = facturas.find(function(x){return x.id===id;});
+  if (!f) return;
+  document.getElementById('modalTitle').textContent = 'Detalle de Validaciones — ' + f.fact;
+  document.getElementById('modalSub').textContent = f.prest + ' — ' + f.afil;
+  var body = '<div class="modal-section"><div class="modal-section-title">Informacion de la factura</div>';
+  body += '<div class="modal-grid">';
+  body += '<div class="mf"><label>Numero factura</label><span>'+f.fact+'</span></div>';
+  body += '<div class="mf"><label>Valor</label><span>$'+f.valor.toLocaleString('es-CO')+'</span></div>';
+  body += '<div class="mf"><label>Estado</label><span class="'+(f.estado==='err'?'err':'')+'">'+f.estado.toUpperCase()+'</span></div>';
+  body += '<div class="mf"><label>Prestador</label><span>'+f.prest+'</span></div>';
+  body += '<div class="mf"><label>Afiliado</label><span>'+f.afil+'</span></div>';
+  body += '<div class="mf"><label>Periodo</label><span>Sep 2026</span></div>';
+  body += '</div></div>';
+  if (f.vals && f.vals.length > 0) {
+    body += '<div class="modal-section"><div class="modal-section-title">Validaciones encontradas ('+f.vals.length+')</div>';
+    f.vals.forEach(function(v) {
+      var isInfo = v.tipo === 'I';
+      body += '<div class="modal-val-item'+(isInfo?' info':'')+'">'+
+        '<div class="mvi-hdr"><span class="mvi-code">'+v.cod+'</span><span class="mvi-tipo'+(isInfo?' info':'')+'">'+( isInfo?'Informativa':'Restrictiva')+'</span><span class="mvi-title">'+v.titulo+'</span></div>'+
+        '<div class="mvi-desc">'+v.desc+'</div>'+
+        '<div class="mvi-action">&#128161; <b>Accion sugerida:</b> '+v.accion+'</div>'+
+      '</div>';
+    });
+    body += '</div>';
+  } else {
+    body += '<div class="modal-section"><div class="modal-section-title">Validaciones</div><div style="color:var(--ok);font-weight:700;padding:10px 0">&#10003; Esta factura no tiene validaciones. Lista para radicar.</div></div>';
+  }
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
+function changePage(dir) { alert('Navegando a pagina '+(currentPage+dir)+'...'); }
+function sortTable(col) { alert('Ordenando por columna '+col+'...'); }
+function exportExcel() { alert('Generando reporte Excel con las 150 facturas del lote...'); }
+function exportPDF() { alert('Generando reporte PDF del lote LOTE-2026-09-001...'); }
+
+// Init
+renderTable(facturas);
+</script>
+</body>
+</html>

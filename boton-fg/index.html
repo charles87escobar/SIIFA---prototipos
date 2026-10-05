@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Beyond Health – Glosas de la Factura</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    background: #e8e8e8;
+    color: #222;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    background: #2d6a2d;
+    color: #fff;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .top-bar .brand {
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+  }
+  .top-bar .top-actions { display: flex; gap: 8px; }
+  .btn-top {
+    background: #fff;
+    color: #2d6a2d;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .btn-top:hover { background: #f0f0f0; }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb {
+    background: #f4f4f4;
+    border-bottom: 1px solid #ccc;
+    padding: 5px 16px;
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    background: #fff;
+    border-bottom: 2px solid #ddd;
+    padding: 10px 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .page-header .icon { font-size: 22px; }
+  .page-header .titles h1 { font-size: 16px; font-weight: bold; color: #1a1a1a; }
+  .page-header .titles p { font-size: 11px; color: #666; margin-top: 1px; }
+
+  /* ── TABS ── */
+  .tabs-bar {
+    background: #fff;
+    border-bottom: 2px solid #2d6a2d;
+    padding: 0 16px;
+    display: flex;
+    gap: 2px;
+  }
+  .tab {
+    padding: 8px 18px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #444;
+    background: #e0e0e0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .tab:hover { background: #d0d0d0; }
+  .tab.active { background: #e8a020; color: #fff; border-color: #c07010; }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    padding: 14px 16px;
+    background: #f9f9f9;
+    min-height: calc(100vh - 160px);
+  }
+
+  /* ── PANEL RESUMEN ── */
+  .summary-panel {
+    background: #fff;
+    border: 1px solid #b0c8b0;
+    border-top: 3px solid #2d6a2d;
+    border-radius: 4px;
+    padding: 0;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .summary-panel-header {
+    background: #2d6a2d;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .summary-panel .summary-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .summary-panel-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 10px 16px;
+    background: #f7fbf7;
+  }
+  .summary-values { display: flex; align-items: center; flex-wrap: wrap; width: 100%; justify-content: space-around; }
+  .summary-item { display: flex; flex-direction: column; align-items: center; padding: 4px 16px; }
+  .summary-item .s-label { font-size: 9.5px; color: #555; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 3px; white-space: nowrap; }
+  .summary-item .s-value { font-size: 15px; font-weight: bold; color: #1a1a1a; line-height: 1; }
+  .summary-item .s-value.red { color: #c62828; }
+  .summary-item .s-value.green { color: #2d6a2d; }
+  .summary-item .s-value.amber { color: #b45309; }
+  .summary-divider { width: 1px; height: 38px; background: #c8ddc8; }
+
+  /* ── SEARCH BAR ── */
+  .search-bar {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .search-bar label { font-size: 11px; font-weight: bold; color: #444; white-space: nowrap; }
+  .search-bar select { font-size: 11px; padding: 4px 8px; border: 1px solid #bbb; border-radius: 3px; background: #fff; color: #333; }
+  .btn-search { background: #2d6a2d; color: #fff; border: none; border-radius: 3px; padding: 5px 14px; font-size: 11px; font-weight: bold; cursor: pointer; }
+  .btn-search:hover { background: #245224; }
+
+  /* ── TABLE AREA ── */
+  .table-area { background: #fff; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; margin-bottom: 14px; }
+  .table-toolbar {
+    background: #f4f4f4;
+    border-bottom: 1px solid #ddd;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .table-toolbar .toolbar-title { font-size: 11px; font-weight: bold; color: #333; text-transform: uppercase; letter-spacing: 0.04em; }
+  .btn-agregar { background: #2d6a2d; color: #fff; border: none; border-radius: 3px; padding: 5px 14px; font-size: 11px; font-weight: bold; cursor: pointer; }
+  .btn-agregar:hover { background: #245224; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead tr { background: #2d6a2d; color: #fff; }
+  thead th { padding: 7px 8px; text-align: center; font-weight: bold; font-size: 10px; text-transform: uppercase; letter-spacing: 0.03em; border-right: 1px solid rgba(255,255,255,0.15); white-space: nowrap; }
+  tbody tr:nth-child(odd) { background: #fff; }
+  tbody tr:nth-child(even) { background: #f2f2f2; }
+  tbody tr:hover { background: #e8f5e9; }
+  tbody td { padding: 6px 8px; border-bottom: 1px solid #e0e0e0; border-right: 1px solid #e8e8e8; text-align: center; vertical-align: middle; }
+  tbody td.text-left { text-align: left; }
+
+  .btn-add-row { background: #2d6a2d; color: #fff; border: none; border-radius: 2px; width: 22px; height: 22px; font-size: 14px; font-weight: bold; cursor: pointer; line-height: 1; }
+  .btn-del-row { background: #c62828; color: #fff; border: none; border-radius: 2px; width: 22px; height: 22px; font-size: 14px; font-weight: bold; cursor: pointer; line-height: 1; }
+
+  .badge-debito { background: #fde8e8; color: #c62828; border: 1px solid #f5c6c6; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: bold; }
+  .badge-credito { background: #e8f5e9; color: #2d6a2d; border: 1px solid #c8e6c9; border-radius: 10px; padding: 2px 8px; font-size: 10px; font-weight: bold; }
+
+  .table-footer { background: #1e4d1e; color: #fff; padding: 5px 12px; font-size: 10px; font-weight: bold; text-align: center; letter-spacing: 0.05em; }
+
+  /* ── BOTÓN FINALIZAR GESTIÓN DE GLOSAS ── */
+  .action-bar {
+    background: #f7fbf7;
+    border: 1px solid #b0c8b0;
+    border-top: 3px solid #2d6a2d;
+    border-radius: 4px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .action-bar .action-info { display: flex; flex-direction: column; gap: 3px; }
+  .action-bar .action-info .ai-title { font-size: 12px; font-weight: bold; color: #1e4d1e; }
+  .action-bar .action-info .ai-desc { font-size: 10px; color: #555; max-width: 520px; line-height: 1.4; }
+
+  /* Estado HABILITADO */
+  .btn-finalizar {
+    background: linear-gradient(135deg, #1565C0 0%, #2d6a2d 100%);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 22px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    box-shadow: 0 3px 10px rgba(21,101,192,0.35);
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .btn-finalizar:hover { background: linear-gradient(135deg, #0d47a1 0%, #1b5e20 100%); box-shadow: 0 5px 16px rgba(21,101,192,0.45); transform: translateY(-1px); }
+  .btn-finalizar:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(21,101,192,0.3); }
+  .btn-finalizar .btn-icon { font-size: 15px; }
+  .btn-finalizar .btn-text-group { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+  .btn-finalizar .btn-main-text { font-size: 12px; font-weight: bold; line-height: 1; }
+  .btn-finalizar .btn-sub-text { font-size: 9px; font-weight: normal; opacity: 0.85; line-height: 1; }
+
+  /* Estado DESHABILITADO */
+  .btn-finalizar.disabled { background: #bdbdbd; color: #757575; cursor: not-allowed; box-shadow: none; transform: none; }
+  .btn-finalizar.disabled:hover { background: #bdbdbd; box-shadow: none; transform: none; }
+
+  /* ── TOGGLE DEMO ── */
+  .demo-toggle {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .demo-toggle .demo-label { font-size: 11px; font-weight: bold; color: #7c5700; }
+  .demo-toggle .demo-desc { font-size: 10px; color: #8a6200; }
+  .toggle-group { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .toggle-group label { font-size: 11px; color: #555; font-weight: bold; }
+  .toggle-switch { position: relative; width: 44px; height: 22px; }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #bdbdbd; border-radius: 22px; transition: 0.3s; }
+  .toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  input:checked + .toggle-slider { background: #1565C0; }
+  input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+  /* ── TOOLTIP ── */
+  .tooltip-wrap { position: relative; display: inline-flex; }
+  .tooltip-wrap .tooltip-box { display: none; position: absolute; bottom: calc(100% + 8px); right: 0; background: #333; color: #fff; font-size: 10px; padding: 6px 10px; border-radius: 4px; white-space: nowrap; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.25); line-height: 1.5; }
+  .tooltip-wrap .tooltip-box::after { content: ''; position: absolute; top: 100%; right: 18px; border: 5px solid transparent; border-top-color: #333; }
+  .tooltip-wrap:hover .tooltip-box { display: block; }
+
+  /* ── MODAL ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal-box { background: #fff; border-radius: 6px; width: 480px; box-shadow: 0 8px 32px rgba(0,0,0,0.25); overflow: hidden; }
+  .modal-header { background: #2d6a2d; color: #fff; padding: 14px 18px; display: flex; align-items: center; gap: 10px; }
+  .modal-header .modal-icon { font-size: 18px; }
+  .modal-header h3 { font-size: 14px; font-weight: bold; }
+  .modal-body { padding: 18px; }
+  .modal-body p { font-size: 12px; color: #333; line-height: 1.6; margin-bottom: 12px; }
+  .modal-summary { background: #f5f9ff; border: 1px solid #c5d8f5; border-radius: 4px; padding: 12px 14px; margin-bottom: 14px; }
+  .modal-summary .ms-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #e0ecff; font-size: 11px; }
+  .modal-summary .ms-row:last-child { border-bottom: none; }
+  .modal-summary .ms-label { color: #555; }
+  .modal-summary .ms-value { font-weight: bold; color: #1a1a1a; }
+  .modal-summary .ms-value.green { color: #2d6a2d; }
+  .modal-summary .ms-value.red { color: #c62828; }
+  .modal-footer { padding: 12px 18px; background: #f9f9f9; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px; }
+  .btn-cancel-modal { background: #fff; color: #555; border: 1px solid #ccc; border-radius: 4px; padding: 7px 18px; font-size: 11px; font-weight: bold; cursor: pointer; }
+  .btn-cancel-modal:hover { background: #f0f0f0; }
+  .btn-confirm-modal { background: #2d6a2d; color: #fff; border: none; border-radius: 4px; padding: 7px 20px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 7px; }
+  .btn-confirm-modal:hover { background: #1e4d1e; }
+
+  /* ── TOAST ── */
+  .toast { display: none; position: fixed; bottom: 24px; right: 24px; background: #2d6a2d; color: #fff; border-radius: 5px; padding: 12px 20px; font-size: 12px; font-weight: bold; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 2000; align-items: center; gap: 10px; max-width: 360px; }
+  .toast.show { display: flex; }
+  .toast .toast-icon { font-size: 16px; }
+
+  /* ── ESTADO BADGE ── */
+  .estado-badge { display: inline-flex; align-items: center; gap: 5px; border-radius: 10px; padding: 3px 10px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.04em; }
+  .estado-badge.pendiente { background: #fff8e1; color: #7c5700; border: 1px solid #ffe082; }
+  .estado-badge.completado { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+  .estado-badge .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .estado-badge.pendiente .dot { background: #f59e0b; }
+  .estado-badge.completado .dot { background: #2d6a2d; }
+</style>
+</head>
+<body>
+<!-- TOP BAR -->
+<div class="top-bar">
+<div class="brand">◆ BEYOND HEALTH</div>
+<div class="top-actions">
+<button class="btn-top">Cerrar</button>
+<button class="btn-top">Página Principal</button>
+</div>
+</div>
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  BEYOND HEALTH &gt; PRESTACIONES &gt; CUENTAS MÉDICAS &gt; CUENTAS MÉDICAS &gt; CUENTAS MÉDICAS ATENCIÓN DETALLE &gt; <strong>GLOSAS DE LA FACTURA</strong>
+</div>
+<!-- PAGE HEADER -->
+<div class="page-header">
+<div class="icon">📋</div>
+<div class="titles">
+<h1>GLOSAS DE LA FACTURA</h1>
+<p>Cuentas Médicas  ·  Factura: <strong>FCV-102030</strong>  ·  Prestador: <strong>CLÍNICA SAN RAFAEL</strong></p>
+</div>
+</div>
+<!-- TABS -->
+<div class="tabs-bar">
+<div class="tab active">Factura</div>
+<div class="tab">Atención</div>
+<div class="tab">Servicio de Riesgo Compartido</div>
+<div class="tab">Procedimientos</div>
+<div class="tab">Medicamentos</div>
+<div class="tab">Medicamentos e Insumos</div>
+</div>
+<!-- MAIN CONTENT -->
+<div class="main-content">
+<!-- DEMO TOGGLE -->
+<div class="demo-toggle">
+<div>
+<div class="demo-label">🎛️ Panel de demostración interactiva</div>
+<div class="demo-desc">Simula los estados del botón "Finalizar Gestión de Glosas" según si el Asegurador ha aceptado valores o no.</div>
+</div>
+<div class="toggle-group">
+<label>Asegurador aceptó valores</label>
+<label class="toggle-switch">
+<input id="toggleHabilitar" onchange="toggleBoton()" type="checkbox"/>
+<span class="toggle-slider"></span>
+</label>
+<span id="toggleLabel" style="font-size:11px;color:#888;font-weight:bold;">NO</span>
+</div>
+</div>
+<!-- PANEL RESUMEN -->
+<div class="summary-panel">
+<div class="summary-panel-header">
+<span style="font-size:13px;">📊</span>
+<div class="summary-title">Resumen Gestión de Glosas – Factura FCV-102030</div>
+</div>
+<div class="summary-panel-body">
+<div class="summary-values">
+<div class="summary-item">
+<span class="s-label">Valor Factura</span>
+<span class="s-value">$2.000.000</span>
+</div>
+<div class="summary-divider"></div>
+<div class="summary-item">
+<span class="s-label">Total Glosado</span>
+<span class="s-value red">$19,00</span>
+</div>
+<div class="summary-divider"></div>
+<div class="summary-item">
+<span class="s-label">Aceptado Asegurador</span>
+<span class="s-value green" id="valAsegurador">$0,00</span>
+</div>
+<div class="summary-divider"></div>
+<div class="summary-item">
+<span class="s-label">Aceptado Prestador</span>
+<span class="s-value amber">$6,00</span>
+</div>
+<div class="summary-divider"></div>
+<div class="summary-item">
+<span class="s-label">Saldo Pendiente</span>
+<span class="s-value red" id="valSaldo">$13,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SEARCH BAR -->
+<div class="search-bar">
+<label>BÚSQUEDA POR</label>
+<select>
+<option>MOSTRAR TODO</option>
+<option>CÓDIGO CONCEPTO</option>
+<option>TIPO DE GLOSA</option>
+<option>NIVEL DE GLOSA</option>
+</select>
+<button class="btn-search">Buscar</button>
+</div>
+<!-- TABLE AREA -->
+<div class="table-area">
+<div class="table-toolbar">
+<div class="toolbar-title">Glosas registradas (3)</div>
+<button class="btn-agregar">+ Agregar</button>
+</div>
+<table>
+<thead>
+<tr>
+<th>SELECCIONAR</th>
+<th>ELIMINAR</th>
+<th>CÓD. CONCEPTO GENERAL</th>
+<th>CONCEPTO GENERAL</th>
+<th>CÓD. CONCEPTO ESPECÍFICO</th>
+<th>CONCEPTO ESPECÍFICO</th>
+<th>CÓD. CONCEPTO APLICACIÓN</th>
+<th>CONCEPTO DE APLICACIÓN</th>
+<th>VALOR GLOSADO</th>
+<th>TIPO DE GLOSA</th>
+<th>NIVEL DE GLOSA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><button class="btn-add-row">+</button></td>
+<td><button class="btn-del-row">✕</button></td>
+<td>2</td>
+<td class="text-left">TARIFA</td>
+<td>08</td>
+<td class="text-left">AYUDAS DIAGNÓSTICAS</td>
+<td>—</td>
+<td class="text-left">—</td>
+<td><strong>$6,00</strong></td>
+<td><span class="badge-debito">DÉBITO</span></td>
+<td>PROCEDIMIENTO</td>
+</tr>
+<tr>
+<td><button class="btn-add-row">+</button></td>
+<td><button class="btn-del-row">✕</button></td>
+<td>2</td>
+<td class="text-left">TARIFA</td>
+<td>08</td>
+<td class="text-left">AYUDAS DIAGNÓSTICAS</td>
+<td>—</td>
+<td class="text-left">—</td>
+<td><strong>$11,00</strong></td>
+<td><span class="badge-credito">CRÉDITO</span></td>
+<td>PROCEDIMIENTO</td>
+</tr>
+<tr>
+<td><button class="btn-add-row">+</button></td>
+<td><button class="btn-del-row">✕</button></td>
+<td>2</td>
+<td class="text-left">TARIFA</td>
+<td>02</td>
+<td class="text-left">CONSULTAS, INTERCONSULTAS Y VISITAS MÉDICAS</td>
+<td>—</td>
+<td class="text-left">—</td>
+<td><strong>$2,00</strong></td>
+<td><span class="badge-credito">CRÉDITO</span></td>
+<td>PROCEDIMIENTO</td>
+</tr>
+</tbody>
+</table>
+<div class="table-footer">PÁGINA 1</div>
+</div>
+<!-- ACTION BAR CON BOTÓN FINALIZAR GESTIÓN DE GLOSAS -->
+<div class="action-bar">
+<div class="action-info">
+<div class="ai-title">🔒 Finalizar Gestión de Glosas</div>
+<div class="ai-desc" id="actionDesc">
+<strong>Botón deshabilitado:</strong> Se habilita cuando el Asegurador haya aceptado levantar al menos una glosa (Valor Aceptado Asegurador &gt; $0). Al ejecutar, genera el registro contable <strong>FG</strong> consolidando todos los valores aceptados por el Asegurador en esta factura.
+      </div>
+</div>
+<div class="tooltip-wrap">
+<button class="btn-finalizar disabled" disabled="" id="btnFinalizar" onclick="abrirModal()">
+<span class="btn-icon">🔒</span>
+<span class="btn-text-group">
+<span class="btn-main-text">Finalizar Gestión de Glosas</span>
+<span class="btn-sub-text">Genera registro FG para Contabilidad</span>
+</span>
+</button>
+<div class="tooltip-box" id="tooltipBox">
+        ⚠️ El Asegurador aún no ha aceptado valores.<br/>
+        Complete la conciliación antes de finalizar.
+      </div>
+</div>
+</div>
+</div>
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modalConfirm">
+<div class="modal-box">
+<div class="modal-header">
+<span class="modal-icon">✅</span>
+<h3>Confirmar Finalización de Gestión de Glosas</h3>
+</div>
+<div class="modal-body">
+<p>Está a punto de generar el registro contable <strong>FG</strong> para la factura <strong>FCV-102030</strong>. Esta acción consolidará los valores aceptados por el Asegurador y los enviará al módulo de Contabilidad.</p>
+<div class="modal-summary">
+<div class="ms-row"><span class="ms-label">Factura</span><span class="ms-value">FCV-102030</span></div>
+<div class="ms-row"><span class="ms-label">Prestador</span><span class="ms-value">CLÍNICA SAN RAFAEL</span></div>
+<div class="ms-row"><span class="ms-label">Valor Total Glosado</span><span class="ms-value red">$19,00</span></div>
+<div class="ms-row"><span class="ms-label">Valor Aceptado Asegurador (FG)</span><span class="ms-value green">$8,00</span></div>
+<div class="ms-row"><span class="ms-label">Saldo Pendiente Conciliar</span><span class="ms-value red">$5,00</span></div>
+<div class="ms-row"><span class="ms-label">Tipo de Registro</span><span class="ms-value">FG – Finalizar Gestión de Glosas</span></div>
+<div class="ms-row"><span class="ms-label">Fecha de Generación</span><span class="ms-value">28/09/2026</span></div>
+</div>
+<p style="color:#c62828; font-size:11px;">⚠️ Esta acción no se puede deshacer. Verifique los valores antes de confirmar.</p>
+</div>
+<div class="modal-footer">
+<button class="btn-cancel-modal" onclick="cerrarModal()">Cancelar</button>
+<button class="btn-confirm-modal" onclick="confirmarFG()">✅ Confirmar y Generar Registro FG</button>
+</div>
+</div>
+</div>
+<!-- TOAST -->
+<div class="toast" id="toastSuccess">
+<span class="toast-icon">✅</span>
+<span>Registro FG generado exitosamente. Enviado a Contabilidad.</span>
+</div>
+<script>
+  function toggleBoton() {
+    const chk = document.getElementById('toggleHabilitar');
+    const btn = document.getElementById('btnFinalizar');
+    const lbl = document.getElementById('toggleLabel');
+    const desc = document.getElementById('actionDesc');
+    const tooltip = document.getElementById('tooltipBox');
+    const valAseg = document.getElementById('valAsegurador');
+    const valSaldo = document.getElementById('valSaldo');
+    const estadoFG = document.getElementById('estadoFG');
+
+    if (chk.checked) {
+      btn.classList.remove('disabled'); btn.disabled = false;
+      btn.innerHTML = `<span class="btn-icon">✅</span><span class="btn-text-group"><span class="btn-main-text">Finalizar Gestión de Glosas</span><span class="btn-sub-text">Genera registro FG para Contabilidad</span></span>`;
+      lbl.textContent = 'SÍ'; lbl.style.color = '#1565C0';
+      valAseg.textContent = '$8,00'; valSaldo.textContent = '$5,00';
+      desc.innerHTML = '<strong style="color:#2d6a2d">Botón habilitado:</strong> El Asegurador ha aceptado <strong>$8,00</strong> en glosas de esta factura. Al ejecutar, se generará el registro contable <strong>FG</strong> por ese valor y se enviará al módulo de Contabilidad para su procesamiento.';
+      tooltip.innerHTML = '✅ Valor Aceptado Asegurador: $8,00<br>Haga clic para generar el registro FG.';
+      estadoFG.className = 'estado-badge pendiente';
+      estadoFG.innerHTML = '<span class="dot"></span> Listo para FG';
+    } else {
+      btn.classList.add('disabled'); btn.disabled = true;
+      btn.innerHTML = `<span class="btn-icon">🔒</span><span class="btn-text-group"><span class="btn-main-text">Finalizar Gestión de Glosas</span><span class="btn-sub-text">Genera registro FG para Contabilidad</span></span>`;
+      lbl.textContent = 'NO'; lbl.style.color = '#888';
+      valAseg.textContent = '$0,00'; valSaldo.textContent = '$13,00';
+      desc.innerHTML = '<strong>Botón deshabilitado:</strong> Se habilita cuando el Asegurador haya aceptado levantar al menos una glosa (Valor Aceptado Asegurador &gt; $0). Al ejecutar, genera el registro contable <strong>FG</strong> consolidando todos los valores aceptados por el Asegurador en esta factura.';
+      tooltip.innerHTML = '⚠️ El Asegurador aún no ha aceptado valores.<br>Complete la conciliación antes de finalizar.';
+      estadoFG.className = 'estado-badge pendiente';
+      estadoFG.innerHTML = '<span class="dot"></span> Pendiente';
+    }
+  }
+
+  function abrirModal() {
+    const chk = document.getElementById('toggleHabilitar');
+    if (!chk.checked) return;
+    document.getElementById('modalConfirm').classList.add('show');
+  }
+  function cerrarModal() { document.getElementById('modalConfirm').classList.remove('show'); }
+  function confirmarFG() {
+    cerrarModal();
+    const estadoFG = document.getElementById('estadoFG');
+    estadoFG.className = 'estado-badge completado';
+    estadoFG.innerHTML = '<span class="dot"></span> FG Generado';
+    const btn = document.getElementById('btnFinalizar');
+    btn.classList.add('disabled'); btn.disabled = true;
+    btn.innerHTML = `<span class="btn-icon">✅</span><span class="btn-text-group"><span class="btn-main-text">Registro FG Generado</span><span class="btn-sub-text">Enviado a Contabilidad</span></span>`;
+    const toast = document.getElementById('toastSuccess');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+  document.getElementById('modalConfirm').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+</script>
+</body>
+</html>
